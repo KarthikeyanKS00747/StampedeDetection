@@ -1,0 +1,12 @@
+{
+  "datasets": [
+    {
+      "id": "umn_crowd_activity",
+      "display_name": "University of Minnesota Unusual Crowd Activity",
+      "url": "https://mha.cs.umn.edu/Movies/Crowd-Activity-All.avi",
+      "license_note": "Research benchmark. Retain attribution and verify source terms before publication.",
+      "use": "Motion-anomaly benchmark only; not ground truth for stampede prediction.",
+      "output": "data/raw/umn/Crowd-Activity-All.avi"
+    }
+  ]
+}

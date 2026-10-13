@@ -1,0 +1,1 @@
+"""Edge camera processing service."""

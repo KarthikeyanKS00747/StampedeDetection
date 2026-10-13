@@ -1,0 +1,73 @@
+# Python environments and bytecode
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python tooling, tests, and coverage
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.tox/
+.nox/
+
+# Packaging and build output
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# JavaScript dependencies and caches
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Runtime files and logs
+edge_spool.jsonl
+*.log
+*.pid
+*.sqlite
+*.sqlite3
+
+# Downloaded datasets and generated features
+data/raw/
+data/features/
+data/review/*.jpg
+
+# Trained/downloaded machine-learning artifacts
+models/*.joblib
+*.pt
+*.pth
+*.onnx
+.ultralytics/
+
+# Editors and operating systems
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+~$*

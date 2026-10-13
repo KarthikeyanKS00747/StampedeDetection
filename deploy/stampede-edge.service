@@ -1,0 +1,15 @@
+[Unit]
+Description=Stampede early warning edge service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/StampedeDetection
+# Replace FOG_PI_IP and select the camera source before enabling.
+ExecStart=/home/pi/StampedeDetection/.venv/bin/python -m edge.main --source 0 --fog-url http://FOG_PI_IP:8000 --area-m2 25
+Restart=on-failure
+User=pi
+
+[Install]
+WantedBy=multi-user.target
