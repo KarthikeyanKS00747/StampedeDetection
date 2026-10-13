@@ -10,7 +10,7 @@ def metrics(**overrides):
 
 
 def test_baseline_classifier_flags_critical():
-    risk, _, reasons = RiskClassifier().assess(metrics(density=5, density_growth_rate=.7, direction_variance=.8, congestion_index=.9))
+    risk, _, reasons, _mode = RiskClassifier().assess(metrics(density=5, density_growth_rate=.7, direction_variance=.8, congestion_index=.9))
     assert risk is RiskLevel.CRITICAL
     assert reasons
 

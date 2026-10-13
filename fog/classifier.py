@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from shared.schemas import FEATURE_COLUMNS, FeatureVector, RiskLevel
+from shared.schemas import FEATURE_COLUMNS, ClassifierMode, FeatureVector, RiskLevel
 
 
 class RiskClassifier:
@@ -15,7 +15,7 @@ class RiskClassifier:
                 raise RuntimeError("Install joblib and scikit-learn to load a trained classifier") from error
             self.model = joblib.load(model_path)
 
-    def assess(self, metrics: FeatureVector) -> tuple[RiskLevel, dict[RiskLevel, float], list[str]]:
+    def assess(self, metrics: FeatureVector) -> tuple[RiskLevel, dict[RiskLevel, float], list[str], ClassifierMode]:
         if self.model is not None:
             row = [[getattr(metrics, column) for column in FEATURE_COLUMNS]]
             risk = RiskLevel(str(self.model.predict(row)[0]))
@@ -23,11 +23,11 @@ class RiskClassifier:
             probabilities = {level: 0.0 for level in RiskLevel}
             for label, value in zip(self.model.classes_, raw):
                 probabilities[RiskLevel(str(label))] = float(value)
-            return risk, probabilities, ["Trained classifier result"]
+            return risk, probabilities, ["Trained classifier result"], ClassifierMode.TRAINED
         return self._heuristic(metrics)
 
     @staticmethod
-    def _heuristic(m: FeatureVector) -> tuple[RiskLevel, dict[RiskLevel, float], list[str]]:
+    def _heuristic(m: FeatureVector) -> tuple[RiskLevel, dict[RiskLevel, float], list[str], ClassifierMode]:
         score = 0
         reasons: list[str] = []
         for condition, points, message in (
@@ -45,4 +45,4 @@ class RiskClassifier:
         # UI confidence only. These are not calibrated probabilities until a model is trained.
         values = {RiskLevel.NORMAL: 0.05, RiskLevel.MODERATE: 0.05, RiskLevel.HIGH: 0.05, RiskLevel.CRITICAL: 0.05}
         values[risk] = 0.85
-        return risk, values, reasons or ["Metrics are within configured baseline limits"]
+        return risk, values, reasons or ["Metrics are within configured baseline limits"], ClassifierMode.HEURISTIC

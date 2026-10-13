@@ -29,16 +29,26 @@ class SystemState:
         self.history: dict[str, deque[RiskAssessment]] = defaultdict(lambda: deque(maxlen=300))
         self.clients: set[WebSocket] = set()
 
-    async def publish(self, assessment: RiskAssessment) -> None:
-        message = assessment.model_dump_json()
-        disconnected = []
+    async def _send_all(self, payload: str) -> None:
+        """Send a pre-serialised JSON string to all connected clients."""
+        disconnected: list[WebSocket] = []
         for client in self.clients:
             try:
-                await client.send_text(message)
+                await client.send_text(payload)
             except Exception:
                 disconnected.append(client)
         for client in disconnected:
             self.clients.discard(client)
+
+    async def publish_assessment(self, assessment: RiskAssessment) -> None:
+        import json
+        envelope = json.dumps({"type": "assessment", "data": json.loads(assessment.model_dump_json())})
+        await self._send_all(envelope)
+
+    async def publish_alert(self, event: AlertEvent) -> None:
+        import json
+        envelope = json.dumps({"type": "alert", "data": json.loads(event.model_dump_json())})
+        await self._send_all(envelope)
 
 
 state = SystemState()
@@ -61,15 +71,27 @@ async def dashboard() -> FileResponse:
 
 @app.post("/api/features", response_model=RiskAssessment)
 async def ingest(features: FeatureVector) -> RiskAssessment:
-    risk, probabilities, reasons = state.classifier.assess(features)
+    risk, probabilities, reasons, mode = state.classifier.assess(features)
     event = state.alerts.evaluate(features.zone_id, risk, reasons)
     if event:
         state.events.appendleft(event)
-    assessment = RiskAssessment(zone_id=features.zone_id, timestamp=features.timestamp, risk=risk, probabilities=probabilities, reasons=reasons, alert_active=state.alerts.is_active(features.zone_id), alert_message=event.message if event else None, metrics=features)
+    assessment = RiskAssessment(
+        zone_id=features.zone_id,
+        timestamp=features.timestamp,
+        risk=risk,
+        probabilities=probabilities,
+        reasons=reasons,
+        alert_active=state.alerts.is_active(features.zone_id),
+        alert_message=event.message if event else None,
+        classifier_mode=mode,
+        metrics=features,
+    )
     state.latest[features.zone_id] = assessment
     state.history[features.zone_id].append(assessment)
     state.gpio.set_risk(risk, assessment.alert_active)
-    await state.publish(assessment)
+    await state.publish_assessment(assessment)
+    if event:
+        await state.publish_alert(event)
     return assessment
 
 
@@ -90,10 +112,12 @@ async def alerts() -> list[AlertEvent]:
 
 @app.websocket("/ws")
 async def websocket(client: WebSocket) -> None:
+    import json
     await client.accept()
     state.clients.add(client)
     try:
-        await client.send_json([item.model_dump(mode="json") for item in state.latest.values()])
+        init_data = [item.model_dump(mode="json") for item in state.latest.values()]
+        await client.send_text(json.dumps({"type": "init", "data": init_data}))
         while True:
             await client.receive_text()
     except WebSocketDisconnect:

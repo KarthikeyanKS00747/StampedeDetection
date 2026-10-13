@@ -7,6 +7,11 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
+class ClassifierMode(str, Enum):
+    HEURISTIC = "heuristic"
+    TRAINED = "trained"
+
+
 class RiskLevel(str, Enum):
     NORMAL = "Normal"
     MODERATE = "Moderate"
@@ -46,6 +51,7 @@ class RiskAssessment(BaseModel):
     reasons: list[str]
     alert_active: bool
     alert_message: str | None = None
+    classifier_mode: ClassifierMode = ClassifierMode.HEURISTIC
     metrics: FeatureVector
 
 

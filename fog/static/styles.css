@@ -1,1 +1,172 @@
-:root{font-family:system-ui,sans-serif;background:#07111f;color:#eef5ff}body{margin:0}main{max-width:1100px;margin:auto;padding:2rem}header{border-bottom:1px solid #31445f}h1{margin-bottom:.2rem}header p{color:#a9b9cf}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:1rem}.card,li{background:#102139;border-radius:10px;padding:1rem}.risk{font-size:1.5rem;font-weight:700}.Normal{color:#5ce098}.Moderate{color:#ffd166}.High-Risk{color:#ff9360}.Critical{color:#ff5263}.metric{color:#a9b9cf;font-size:.8rem}.value{font-size:1.2rem}ol{padding-left:0;list-style:none}li{margin:.4rem 0}
+/* ── Tokens ─────────────────────────────────────────────────────────────────── */
+:root {
+  font-family: system-ui, sans-serif;
+  background: #07111f;
+  color: #eef5ff;
+}
+
+body  { margin: 0; }
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 2rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+header { border-bottom: 1px solid #31445f; }
+h1     { margin-bottom: .2rem; }
+header p { color: #a9b9cf; }
+
+/* ── Disconnect banner ───────────────────────────────────────────────────────── */
+.banner {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #7c4a00;
+  color: #ffe08a;
+  text-align: center;
+  padding: .6rem 1rem;
+  font-weight: 600;
+  letter-spacing: .03em;
+}
+
+/* ── Zone cards ──────────────────────────────────────────────────────────────── */
+article {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+article.stale {
+  opacity: .6;
+  outline: 2px dashed #667;
+  border-radius: 10px;
+}
+
+.stale-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: rgba(7, 17, 31, .78);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.stale-overlay span {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #a0aec0;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* ── Grid + cards ────────────────────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card, li {
+  background: #102139;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.risk-card { margin-bottom: 1rem; }
+
+/* ── Risk levels ─────────────────────────────────────────────────────────────── */
+.risk        { font-size: 1.5rem; font-weight: 700; }
+.Normal      { color: #5ce098; }
+.Moderate    { color: #ffd166; }
+.High-Risk   { color: #ff9360; }
+.Critical    { color: #ff5263; }
+
+/* ── Metrics ─────────────────────────────────────────────────────────────────── */
+.metric      { color: #a9b9cf; font-size: .8rem; }
+.value       { font-size: 1.2rem; }
+.last-update { font-size: .75rem; color: #667a92; margin-top: .5rem; }
+
+/* ── Source tag ──────────────────────────────────────────────────────────────── */
+.source-tag {
+  font-size: .7rem;
+  padding: .15rem .45rem;
+  border-radius: 4px;
+  background: #1e3a5f;
+  color: #a9c4e0;
+  vertical-align: middle;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+.source-tag.sim { background: #3a2e00; color: #ffd166; }
+
+/* ── Classifier mode badge ───────────────────────────────────────────────────── */
+.mode-tag {
+  font-size: .68rem;
+  padding: .15rem .45rem;
+  border-radius: 4px;
+  vertical-align: middle;
+  font-weight: 700;
+  letter-spacing: .05em;
+}
+.mode-tag.heuristic {
+  background: #3d1a00;
+  color: #ff9360;
+  border: 1px solid #7a3820;
+  cursor: help;
+}
+.mode-tag.trained {
+  background: #0a2e1a;
+  color: #5ce098;
+  border: 1px solid #1a6640;
+}
+
+/* ── History charts ──────────────────────────────────────────────────────────── */
+.charts-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.chart-wrap {
+  flex: 1 1 280px;
+  background: #0c1b2e;
+  border-radius: 10px;
+  padding: .75rem 1rem 1rem;
+  border: 1px solid #1e3050;
+}
+
+.chart-label {
+  font-size: .8rem;
+  color: #a9b9cf;
+  margin-bottom: .4rem;
+}
+
+.chart-unit {
+  color: #667a92;
+  font-size: .7rem;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 72px;
+}
+
+/* ── Alert log ───────────────────────────────────────────────────────────────── */
+ol { padding-left: 0; list-style: none; }
+
+li { margin: .4rem 0; }
+
+.alert-active  { border-left: 3px solid #ff5263; }
+.alert-cleared { border-left: 3px solid #5ce098; }
+
+.alert-time {
+  font-size: .78rem;
+  color: #a9b9cf;
+  margin-left: .3rem;
+}
