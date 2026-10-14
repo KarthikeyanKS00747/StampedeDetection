@@ -7,6 +7,15 @@
       "license_note": "Research benchmark. Retain attribution and verify source terms before publication.",
       "use": "Motion-anomaly benchmark only; not ground truth for stampede prediction.",
       "output": "data/raw/umn/Crowd-Activity-All.avi"
+    },
+    {
+      "id": "gpd_riot_drill_2009",
+      "display_name": "GPD Riot Drill 2009 — controlled volunteer exercise",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/GPD_RIOT_DRILL_2009.webm",
+      "source_page": "https://commons.wikimedia.org/wiki/File:GPD_RIOT_DRILL_2009.webm",
+      "license_note": "CC BY 3.0 on source page. Attribute SOFISINTOWN, link https://creativecommons.org/licenses/by/3.0/ and identify derivatives.",
+      "use": "Controlled-drill review/evaluation candidate; not a real stampede or verified risk label.",
+      "output": "data/raw/commons/GPD_RIOT_DRILL_2009.webm"
     }
   ]
 }

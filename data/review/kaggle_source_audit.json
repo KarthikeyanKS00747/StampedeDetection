@@ -1,0 +1,92 @@
+{
+  "checked_on": "2026-10-14",
+  "dataset_url": "https://www.kaggle.com/datasets/ithikashr/stampede-model",
+  "metadata_api": "https://www.kaggle.com/api/v1/datasets/view/ithikashr/stampede-model",
+  "file_list_api": "https://www.kaggle.com/api/v1/datasets/list/ithikashr/stampede-model",
+  "title": "Stampede-model",
+  "owner": "ithikashr",
+  "version": 1,
+  "total_bytes": 446655658,
+  "listed_license": "MIT",
+  "description": "",
+  "file_count": 17,
+  "all_files_mp4": true,
+  "annotation_files_found": false,
+  "next_page_token": "",
+  "upstream_rights_verified": false,
+  "notes": [
+    "MIT is the uploader's listed licence, not independent evidence that Getty/news footage rights are cleared.",
+    "Local Video Project 10.mp4 and Video Project 11.mp4 are not listed under those names; original mapping of edited/renamed clips is not yet established.",
+    "No bounding-box files, temporal labels, class folders or training split found in the returned complete file inventory."
+  ],
+  "files": [
+    {
+      "name": "04_jun_25_speech_ifrmit_1749042567_720 (online-video-cutter.com).mp4",
+      "bytes": 14911735
+    },
+    {
+      "name": "2.mp4",
+      "bytes": 61594403
+    },
+    {
+      "name": "3.mp4",
+      "bytes": 62236307
+    },
+    {
+      "name": "5.mp4",
+      "bytes": 61631971
+    },
+    {
+      "name": "7.mp4",
+      "bytes": 61177535
+    },
+    {
+      "name": "8.mp4",
+      "bytes": 61773226
+    },
+    {
+      "name": "AQNKR_4FmmzT1q8c6a08q-TErVMKleyv08nx8Du6Eu88krdoY5CYcRylbvvUjsb5yuZZ-8IQFLBOONENuB-ex48RROr_Gw8g_FNd8v92uYZmDg-VEED.mp4",
+      "bytes": 28762072
+    },
+    {
+      "name": "Charlie Kirk shooting_ Video captures panic at Utah campus as gunshot heard.mp4",
+      "bytes": 7387474
+    },
+    {
+      "name": "ezyZip.mp4",
+      "bytes": 7548598
+    },
+    {
+      "name": "gettyimages-2193687205-640_adpp (online-video-cutter.com) (1).mp4",
+      "bytes": 17116655
+    },
+    {
+      "name": "gettyimages-2193687205-640_adpp (online-video-cutter.com).mp4",
+      "bytes": 12928069
+    },
+    {
+      "name": "gettyimages-2203499024-640_adpp.mp4",
+      "bytes": 1948146
+    },
+    {
+      "name": "newyork.mp4",
+      "bytes": 5132694
+    },
+    {
+      "name": "ssvid.net---England-fans-fight-Scotland-fans-England-vs-Scotland-brawl_v720P.mp4",
+      "bytes": 8548751
+    },
+    {
+      "name": "ssvid.net--Video-Stampede-storms-entrance-of-Astroworld-festival_v720P.mp4",
+      "bytes": 3942307
+    },
+    {
+      "name": "uAp_qlsvas6IvprG (online-video-cutter.com) (1).mp4",
+      "bytes": 10185449
+    },
+    {
+      "name": "uAp_qlsvas6IvprG (online-video-cutter.com).mp4",
+      "bytes": 19830266
+    }
+  ]
+}

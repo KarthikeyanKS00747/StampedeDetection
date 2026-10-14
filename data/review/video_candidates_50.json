@@ -1,8 +1,8 @@
 {
   "researched_on": "2026-10-10",
   "scope": "50 distinct video page URLs, not 50 independent events or training-ready files",
-  "method": "Metadata/licence discovery, followed by preliminary browser playback-frame sampling of 8 catalogue videos. Buffering prevented continuous/full viewing. Remaining 42 are metadata-only.",
-  "visually_sampled_count": 8,
+  "method": "Metadata/licence discovery; preliminary browser sampling of 8 catalogue videos, followed by a 9-frame local contact sheet of downloaded V050. Not full continuous review. Human feedback on all 50 is recorded separately.",
+  "visually_sampled_count": 9,
   "category_counts": {
     "Concert / festival": 27,
     "Sports crowd": 12,
@@ -11,11 +11,16 @@
     "Controlled drill": 1
   },
   "training_ready_count": 0,
+  "human_reviewed_count": 50,
+  "human_review_date": "2026-10-14",
   "geography_policy": "Named official events have source-supported countries; stock video location remains unverified despite tags.",
   "licensing_source": "https://www.pexels.com/terms-of-service/",
   "candidates": [
     {
       "id": "V001",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Lots of blinking lights; concern about motion-feature contamination."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Illumination/low-light challenge"],
       "visual_review": "Browser playback frames sampled; not full review",
       "visual_fit_decision": "Conditional challenge clip",
       "visual_observations": "Night overhead crowd with strong changing coloured illumination. Layout is visible, but light changes can create false optical-flow motion. Buffering limited inspection; camera stability not established.",
@@ -33,6 +38,9 @@
     },
     {
       "id": "V002",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Lots of blinking lights; concern about motion-feature contamination."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Illumination/low-light challenge"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -47,6 +55,9 @@
     },
     {
       "id": "V003",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Mostly people sitting on stage; not helpful for crowd analysis."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Browser playback frames sampled; not full review",
       "visual_fit_decision": "Deprioritise primary training",
       "visual_observations": "Sampled night view is dominated by stage/arena structures. Spectators are dim and small. Poor primary crowd ROI; full clip might contain a better window but not established.",
@@ -64,6 +75,9 @@
     },
     {
       "id": "V004",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Horizontal ground-level view from people's perspective."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Browser playback frames sampled; not full review",
       "visual_fit_decision": "Conditional challenge clip",
       "visual_observations": "Ground-level indoor audience with raised phones, foreground backs/heads, low light and changing stage illumination. Heavy occlusion. Candidate for false-alarm/robustness testing rather than clean flow ground truth.",
@@ -81,6 +95,9 @@
     },
     {
       "id": "V005",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Okay, but fewer people."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -95,6 +112,9 @@
     },
     {
       "id": "V006",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Front view of few people; probably not useful."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -109,6 +129,9 @@
     },
     {
       "id": "V007",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Useful crowd in bottom ~20%; blinking illumination; upper ~80% not crowd."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Illumination/low-light challenge","Define crowd ROI; reject stage/background motion"],
       "visual_review": "Browser playback frames sampled; not full review",
       "visual_fit_decision": "Deprioritise primary training",
       "visual_observations": "Overhead title is misleading for our purpose: sampled frames show a brightly lit stage occupying most of the image, with audience mainly along the lower border. Crop possibilities need full review.",
@@ -126,6 +149,9 @@
     },
     {
       "id": "V008",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Useful, but people very small."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Small-person detector/count validation required"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -140,6 +166,9 @@
     },
     {
       "id": "V009",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Useful overhead view; zooms from close to far."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Moving camera/zoom/cuts require segmentation and stabilisation assessment"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -154,6 +183,9 @@
     },
     {
       "id": "V010",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Close front view of a person; usefulness uncertain."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -168,6 +200,9 @@
     },
     {
       "id": "V011",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Performer-focused and participants jumping; not useful."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -182,6 +217,9 @@
     },
     {
       "id": "V012",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Small event with little crowd."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -196,6 +234,9 @@
     },
     {
       "id": "V013",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Blinking lights but high-quality frames; possibly useful."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Illumination/low-light challenge"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -210,6 +251,9 @@
     },
     {
       "id": "V014",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Performer-facing view with crowd barely visible; not useful."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -224,6 +268,9 @@
     },
     {
       "id": "V015",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Small distant people; possibly useful."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Small-person detector/count validation required"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -238,6 +285,9 @@
     },
     {
       "id": "V016",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Large theatre/opera-like audience, diagonal view, little visible movement."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -252,6 +302,9 @@
     },
     {
       "id": "V017",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Very dark, large crowd seen sideways."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Illumination/low-light challenge"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -266,6 +319,9 @@
     },
     {
       "id": "V018",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Moving camera, overhead view including seated crowd."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Moving camera/zoom/cuts require segmentation and stabilisation assessment"],
       "visual_review": "Browser playback frames sampled; not full review",
       "visual_fit_decision": "Prioritise further review",
       "visual_observations": "Daylight elevated view of seated rows and people around perimeter paths. Useful candidate for crowded but non-running scene testing. Bench/chair geometry and camera drift require care; no danger label assigned.",
@@ -283,6 +339,9 @@
     },
     {
       "id": "V019",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Overhead crowd only in bottom ~30% of frame."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Define crowd ROI; reject stage/background motion"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -297,6 +356,9 @@
     },
     {
       "id": "V020",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Interesting small fair with locally crowded and open areas; strong testing candidate."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Possible V020/V022 duplicate; group together until disproved"],
       "visual_review": "Browser playback frames sampled; not full review",
       "visual_fit_decision": "Prioritise further review",
       "visual_observations": "Daylight overhead view shows a local cluster around a red event structure plus people in open areas and adjacent roads. Useful crowd-ROI and occupancy variation. Vehicles must be masked; drone-motion checks still required.",
@@ -314,6 +376,9 @@
     },
     {
       "id": "V021",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Similar to V020 with more blocked areas; good candidate."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -328,6 +393,9 @@
     },
     {
       "id": "V022",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"May duplicate V020; identity needs checking."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Possible V020/V022 duplicate; group together until disproved"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -342,6 +410,9 @@
     },
     {
       "id": "V023",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Useful overhead view that moves upwards."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Moving camera/zoom/cuts require segmentation and stabilisation assessment"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -356,6 +427,9 @@
     },
     {
       "id": "V024",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Too many cuts; not useful or worth effort."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Edited video: do not compute optical flow across cuts"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -371,6 +445,9 @@
     },
     {
       "id": "V025",
+      "human_reviews": [{"reviewer":"Karthikeyan","note":"Too many cuts; same concern as V024."},{"reviewer":"Teammate (name not supplied)","note":"Too large."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Edited video: do not compute optical flow across cuts"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -386,6 +463,9 @@
     },
     {
       "id": "V026",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Useful at 00:00–00:04, but camera moves."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Moving camera/zoom/cuts require segmentation and stabilisation assessment","Edited video: do not compute optical flow across cuts"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -401,6 +481,9 @@
     },
     {
       "id": "V027",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Probably not useful; people standing and sitting on hillside."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -416,6 +499,9 @@
     },
     {
       "id": "V028",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Somewhat useful; crowd with some jumping."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Browser playback frames sampled; not full review",
       "visual_fit_decision": "Conditional challenge clip",
       "visual_observations": "Stadium supporters viewed from within the stands. Foreground people are clear but obscure the wider crowd. Cheering and flags are visible. Useful hard-negative candidate only after window annotation; no escape/crush evidence established.",
@@ -433,6 +519,9 @@
     },
     {
       "id": "V029",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Not useful; substantial empty space."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -447,6 +536,9 @@
     },
     {
       "id": "V030",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Somewhat useful; standing still and waving hands."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -461,6 +553,9 @@
     },
     {
       "id": "V031",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Somewhat useful; waving hands and standing in football stadium."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -475,6 +570,9 @@
     },
     {
       "id": "V032",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Not useful; seated football crowd."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -489,6 +587,9 @@
     },
     {
       "id": "V033",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Useful; football crowd movement."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -503,6 +604,9 @@
     },
     {
       "id": "V034",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Not useful; seated football crowd."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -517,6 +621,9 @@
     },
     {
       "id": "V035",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Useful; football crowd jumping in place."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -531,6 +638,9 @@
     },
     {
       "id": "V036",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Not useful; football stadium."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -545,6 +655,9 @@
     },
     {
       "id": "V037",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Not useful; too many empty seats."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -559,6 +672,9 @@
     },
     {
       "id": "V038",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Not useful; no movement."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -573,6 +689,9 @@
     },
     {
       "id": "V039",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Not useful; seated football crowd."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -587,6 +706,9 @@
     },
     {
       "id": "V040",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Somewhat useful; close-packed crowd with movement, Indian festival."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -601,6 +723,9 @@
     },
     {
       "id": "V041",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Not useful; little movement, protest."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -615,6 +740,9 @@
     },
     {
       "id": "V042",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Not useful; more empty space than people, protest."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -629,6 +757,9 @@
     },
     {
       "id": "V043",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Useful; bridge portion specifically."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -643,6 +774,9 @@
     },
     {
       "id": "V044",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Useful; group moving together, BLM protest."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -657,6 +791,9 @@
     },
     {
       "id": "V045",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Useful; religious procession moving."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -671,6 +808,9 @@
     },
     {
       "id": "V046",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Useful; aerial Indian festival."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Browser playback frames sampled; not full review",
       "visual_fit_decision": "Prioritise further review",
       "visual_observations": "Elevated portrait view shows a procession along a narrow street around a decorated structure. Later sampled frames show substantial camera/framing change. Useful geometry/flow scenario; stabilise before motion features. Only about 9.86 seconds long.",
@@ -688,6 +828,9 @@
     },
     {
       "id": "V047",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Somewhat useful; political celebrations."}],
+      "curation_route": "Further motion/occupancy review",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -703,6 +846,9 @@
     },
     {
       "id": "V048",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Useful but too many cuts."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned","Moving camera/zoom/cuts require segmentation and stabilisation assessment","Edited video: do not compute optical flow across cuts"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -718,6 +864,9 @@
     },
     {
       "id": "V049",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Not useful."}],
+      "curation_route": "Deprioritise primary motion training",
+      "curation_checks": ["Training permission unresolved","No window-level risk label assigned"],
       "visual_review": "Not watched; metadata screened",
       "download_status": "Not downloaded",
       "training_approved": false,
@@ -733,8 +882,14 @@
     },
     {
       "id": "V050",
-      "visual_review": "Not watched; metadata screened",
-      "download_status": "Not downloaded",
+      "local_path": "data/raw/commons/GPD_RIOT_DRILL_2009.webm",
+      "downloaded_on": "2026-10-14",
+      "acquisition_license": "CC BY 3.0; SOFISINTOWN attribution recorded in data/raw/commons/ATTRIBUTION.md",
+      "human_reviews": [{"reviewer":"Teammate (name not supplied)","note":"Possibly barely useful; practice drill."}],
+      "curation_route": "Consider routine-crowd / hard-negative evaluation",
+      "curation_checks": ["Retain CC BY 3.0 attribution and record changes","No window-level risk label assigned"],
+      "visual_review": "Nine local contact-sheet frames sampled; not full playback",
+      "download_status": "Downloaded",
       "training_approved": false,
       "risk_label": null,
       "user_decision": "Pending",
@@ -744,7 +899,7 @@
       "url": "https://commons.wikimedia.org/wiki/File:GPD_RIOT_DRILL_2009.webm",
       "rights_status": "CC BY 3.0 on source page; attribute SOFISINTOWN, link licence, identify changes",
       "event_group": "gpd-drill-2009",
-      "review_notes": "Controlled volunteer drill, not a real crush or evacuation incident. Technical/behaviour review still pending."
+      "review_notes": "Controlled volunteer drill, not a real crush or evacuation incident. Local samples show handheld views, shields, smoke and transitions; useful only as an explicitly controlled/difficult-view reference. Behaviour labels remain pending."
     }
   ]
 }

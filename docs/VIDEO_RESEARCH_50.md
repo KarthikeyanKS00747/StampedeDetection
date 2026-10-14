@@ -6,7 +6,7 @@ Researched 10 October 2026. This reaches the **discovery baseline**, not a train
 
 ## What was checked
 
-Search metadata, source identity where available, broad scenario relevance and selected licence pages. Follow-up browser sampling covered 8 of these 50: see [preliminary visual findings](VIDEO_VISUAL_REVIEW.md). The other 42 remain metadata-only. None has completed full visual review, download, annotation or training approval. Stock-video countries remain unverified. Named concert sources cover UK, Belgium, Brazil and Germany; the drill is from the USA and political sources from India.
+Search metadata, source identity where available, broad scenario relevance and selected licence pages. Browser sampling covered 8 of these 50: see [preliminary visual findings](VIDEO_VISUAL_REVIEW.md). On 14 October V050 was downloaded under its listed CC BY 3.0 licence and sampled in a 9-frame contact sheet, bringing assistant-sampled candidates to 9. Human feedback on all 50 is recorded separately. Only V050 is downloaded; none is annotated or training-approved. Stock-video countries remain unverified. Named concert sources cover UK, Belgium, Brazil and Germany; the drill is from the USA and political sources from India.
 
 ## Rights correction
 

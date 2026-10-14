@@ -10,6 +10,7 @@ import cv2
 import numpy as np
 
 from edge.features import FeatureExtractor
+from edge.motion import frame_time, velocities
 from edge.transport import FogTransport
 
 
@@ -29,6 +30,9 @@ def run_video(args: argparse.Namespace, extractor: FeatureExtractor, transport: 
     capture = cv2.VideoCapture(int(args.source) if args.source.isdigit() else args.source)
     if not capture.isOpened():
         raise RuntimeError(f"Cannot open source: {args.source}")
+    is_camera = args.source.isdigit()
+    native_fps = capture.get(cv2.CAP_PROP_FPS) or args.sample_fps
+    stride = max(1, round(native_fps / args.sample_fps))
     model = None
     tracker = None
     if not args.no_yolo:
@@ -41,18 +45,26 @@ def run_video(args: argparse.Namespace, extractor: FeatureExtractor, transport: 
         tracker = sv.ByteTrack()
     previous_gray = None
     previous_centres: dict[int, tuple[float, float]] = {}
-    last_emit = 0.0
+    last_emit = -float("inf")
+    previous_time = None
+    frame_index = -1
     while True:
         ok, frame = capture.read()
         if not ok:
             break
-        now = time.time()
+        frame_index += 1
+        if frame_index % stride:
+            continue
+        now = time.monotonic() if is_camera else frame_time(frame_index, native_fps)
+        delta_s = now - previous_time if previous_time is not None else stride / native_fps
+        delta_s = max(delta_s, 1e-6)
+        previous_time = now
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         flow_vectors: list[tuple[float, float]] = []
         if previous_gray is not None:
             flow = cv2.calcOpticalFlowFarneback(previous_gray, gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
             sampled = flow[::20, ::20].reshape(-1, 2)
-            flow_vectors = [(float(x), float(y)) for x, y in sampled if x * x + y * y > 0.04]
+            flow_vectors = velocities(sampled, delta_s)
         previous_gray = gray
         count, track_vectors = 0, []
         if model is not None and tracker is not None:
@@ -66,11 +78,11 @@ def run_video(args: argparse.Namespace, extractor: FeatureExtractor, transport: 
                 current_centres[int(track_id)] = centre
                 if int(track_id) in previous_centres:
                     old = previous_centres[int(track_id)]
-                    track_vectors.append((centre[0] - old[0], centre[1] - old[1]))
+                    track_vectors.extend(velocities([(centre[0] - old[0], centre[1] - old[1])], delta_s))
             previous_centres = current_centres
         if now - last_emit >= args.window_seconds:
             transport.flush()
-            transport.send(extractor.extract(args.zone_id, now, count, track_vectors, flow_vectors, source="video" if not args.source.isdigit() else "camera"))
+            transport.send(extractor.extract(args.zone_id, now, count, track_vectors, flow_vectors, source="camera" if is_camera else "video"))
             last_emit = now
     capture.release()
 
@@ -83,9 +95,12 @@ def main() -> None:
     parser.add_argument("--zone-id", default="zone-1")
     parser.add_argument("--area-m2", type=float, default=25.0)
     parser.add_argument("--window-seconds", type=float, default=1.0)
+    parser.add_argument("--sample-fps", type=float, default=5.0)
     parser.add_argument("--simulate", action="store_true")
     parser.add_argument("--no-yolo", action="store_true")
     args = parser.parse_args()
+    if args.sample_fps <= 0 or args.window_seconds <= 0:
+        parser.error("sample-fps and window-seconds must be positive")
     extractor = FeatureExtractor(area_m2=args.area_m2)
     transport = FogTransport(args.fog_url)
     simulate(extractor, transport, args.zone_id) if args.simulate else run_video(args, extractor, transport)

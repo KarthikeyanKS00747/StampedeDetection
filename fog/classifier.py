@@ -14,6 +14,16 @@ class RiskClassifier:
             except ImportError as error:
                 raise RuntimeError("Install joblib and scikit-learn to load a trained classifier") from error
             self.model = joblib.load(model_path)
+            if isinstance(self.model, dict):
+                raise ValueError("Research anomaly/behaviour bundles are not four-tier risk classifiers; use --anomaly-model for quality_joint.joblib")
+            if not all(hasattr(self.model, name) for name in ("predict", "predict_proba", "classes_")):
+                raise ValueError("Risk model must support class predictions and probabilities")
+            if getattr(self.model, "n_features_in_", None) != len(FEATURE_COLUMNS):
+                raise ValueError("Risk model must use the seven live edge features")
+            if not set(map(str, self.model.classes_)) <= {level.value for level in RiskLevel}:
+                raise ValueError("Risk model contains unsupported classes")
+            if hasattr(self.model, "feature_names_in_") and list(self.model.feature_names_in_) != FEATURE_COLUMNS:
+                raise ValueError("Risk model feature order does not match the edge contract")
 
     def assess(self, metrics: FeatureVector) -> tuple[RiskLevel, dict[RiskLevel, float], list[str], ClassifierMode]:
         if self.model is not None:

@@ -64,7 +64,7 @@ Run the fog server on the Pi connected to the LEDs/buzzer. The edge Pi only need
 
 ## Train a classifier when labels exist
 
-Prepare a CSV with `risk` plus the feature columns listed in `shared/schemas.py`, then run:
+Prepare a CSV with the feature columns in `shared/schemas.py` and reviewed `risk`, `event_id`, `reviewer`, `rights_approved`, `permission_evidence` and `motion_units` fields. Motion units must be `pixels_per_second`, permissions must be verified, and each class needs independent event groups for a held-out split. See `docs/CURATION_UPDATE_2026_10_14.md`. Then run:
 
 ```bash
 python -m training.train --input data/labelled_windows.csv --output models/risk_classifier.joblib
@@ -74,10 +74,22 @@ Start fog with `--model models/risk_classifier.joblib` to use it. Until then, th
 
 ## Tests
 
+The trained research anomaly model now reaches the existing fog dashboard through a separate, quality-gated API. See [project handoff, demo commands and remaining blockers](docs/PROJECT_HANDOFF.md). It does not supply the four-tier risk classifier or drive GPIO alarms.
+
+An experimental motion-anomaly baseline has been fitted separately from the fog risk classifier. See [first training results](docs/FIRST_TRAINING_RESULTS.md). Its bundles are research-only and must not be used to drive alarms.
+
+CUDA person-detection audits and augmented experimental model fits are also complete. See [GPU results, Kaggle audit and terminal commands](docs/GPU_TRAINING_RESULTS.md). Pretrained inference is not detector fine-tuning, and the supplied dataset contains no annotation files.
+
+Quality-gated offline camera compensation, cut guards and two further reference anomaly fits are complete. See [quality-training progress](docs/QUALITY_TRAINING_PROGRESS.md). Indeterminate windows receive no score/threshold decision, and no experimental bundle is deployed to the fog alarm.
+
 ```bash
 pytest
 ```
 
 ## Deployment boundary
+
+Transferring Karthikeyan's work? Start with [the detailed teammate takeover checklist](docs/TEAMMATE_TAKEOVER.md). Generated models/media and machine-local review state are deliberately excluded from Git; the checklist explains private artifact transfer and regeneration.
+
+The local video annotation tool is ready: see [launch instructions and review workflow](docs/ANNOTATION_WORKFLOW.md). It separates observable behaviour from danger labels and serves media locally without uploads.
 
 Before use outside a lab: calibrate the monitored area, validate on representative labelled footage, tune thresholds with safety staff, provide redundant human monitoring, and document an escalation procedure. Never test by creating dangerous crowd conditions.

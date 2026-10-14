@@ -93,6 +93,25 @@ function classifierBadge(mode) {
   return '<span class="mode-tag heuristic" title="Not a validated prediction">UNVALIDATED HEURISTIC</span>';
 }
 
+function renderAnomaly(item) {
+  document.getElementById('ml-panel').hidden = false;
+  const id = `ml-zone-${item.zone_id}`;
+  let box = document.getElementById(id);
+  if (!box) {
+    box = document.createElement('article');
+    box.id = id;
+    box.className = 'card';
+    document.getElementById('ml-zones').append(box);
+  }
+  box.innerHTML = `<h3>${esc(item.clip_id)} · EXPERIMENTAL ML</h3>
+    <p class="ml-stale" hidden>STALE — live observation unavailable</p>
+    <div class="value">${esc(item.observation)}</div>
+    <p>Window ${item.start_s.toFixed(2)}–${item.end_s.toFixed(2)}s · score ${item.score === null ? 'unavailable' : item.score.toFixed(4)} · threshold ${item.threshold.toFixed(4)}</p>
+    <p>${esc(item.quality_reason)}</p><p>${esc(item.warning)}</p>
+    <div class="last-update">Last update: ${fmtTime(item.timestamp)}</div>`;
+  lastSeen[item.zone_id] = Date.now();
+}
+
 // ── Zone rendering ────────────────────────────────────────────────────────────
 function renderZone(item) {
   emptyEl.hidden = true;
@@ -193,6 +212,8 @@ function startStaleTimer() {
     const now = Date.now();
     Object.entries(lastSeen).forEach(([z, ts]) => {
       if (now - ts > STALE_TIMEOUT_MS) markStale(z);
+      const mlBox = document.getElementById(`ml-zone-${z}`);
+      if (mlBox) mlBox.querySelector('.ml-stale').hidden = now - ts <= STALE_TIMEOUT_MS;
     });
   }, 2000);
 }
@@ -205,6 +226,7 @@ function connect() {
   ws.onopen = () => {
     bannerEl.hidden = true;
     startStaleTimer();
+    fetch('/api/ml/status').then(r => r.json()).then(xs => xs.forEach(renderAnomaly)).catch(() => {});
   };
 
   ws.onmessage = e => {
@@ -229,6 +251,9 @@ function connect() {
         break;
       case 'alert':
         prependAlert(msg.data);
+        break;
+      case 'anomaly':
+        renderAnomaly(msg.data);
         break;
       default:
         if (Array.isArray(msg)) msg.forEach(renderZone);
