@@ -60,6 +60,15 @@ For annotation, the original private folder is `C:\Users\LENOVO\Downloads\stampe
 
 ## 4. First run on the successor's laptop
 
+If GitHub has not received the handoff commit because the required release gate is blocked, use the local `outputs/handoff/StampedeDetection.bundle` instead. Copy it and the experimental artifact ZIP through your agreed private handover channel. On the successor's machine:
+
+```powershell
+git clone "D:\handoff\StampedeDetection.bundle" StampedeDetection
+cd StampedeDetection
+```
+
+Replace the bundle path with its actual location. This is a local/offline transfer, not a GitHub push. The repository bundle contains committed source/history, not ignored videos or models; the artifact ZIP supplies the experimental demo files. The ZIP is only suitable for trusted internal research use under the limitations above.
+
 Clone the repository into your own folder and work there. Python/dependency compatibility must be checked; the original run used Python 3.13, PyTorch 2.14.1+cu126 and Ultralytics 8.4.175. `requirements.txt` uses version ranges, not a complete lockfile. Installing plain requirements does not guarantee CUDA is available: use the official PyTorch installation instructions for your machine and verify `torch.cuda.is_available()` before GPU processing. No GPU is needed for cached-feature replay or tree fitting.
 
 ```powershell
