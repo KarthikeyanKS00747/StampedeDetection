@@ -1,0 +1,7 @@
+window_start_frame,window_end_frame,window_start_ts,predicted_label,confidence,N_mean,N_std,overlap_mean,overlap_std,motion_mean,motion_std,delta_N
+0,29,0.0,normal,0.985,0.0,0.0,0.0,0.0,5.4627,1.75384,0.0
+15,44,0.6,normal,0.99,0.0,0.0,0.0,0.0,5.94365,1.98866,0.0
+30,59,1.2,normal,0.965,0.0,0.0,0.0,0.0,6.29851,1.94841,0.0
+45,74,1.8,normal,0.975,0.0,0.0,0.0,0.0,6.82046,1.59044,0.0
+60,89,2.4,normal,0.945,0.0,0.0,0.0,0.0,6.93656,1.56651,0.0
+75,104,3.0,normal,1.0,0.0,0.0,0.0,0.0,6.61398,1.62101,0.0

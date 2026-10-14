@@ -1,0 +1,15 @@
+# Crowd Anomaly Detection — Dependencies
+# Python >= 3.9 required
+
+# Core ML
+scikit-learn>=1.3.0
+numpy>=1.24.0
+
+# YOLO person detector (also used by train_yolo.py)
+ultralytics>=8.0.0
+
+# Image processing
+opencv-python>=4.8.0
+
+# (Optional) Plotting for reporting
+matplotlib>=3.7.0
