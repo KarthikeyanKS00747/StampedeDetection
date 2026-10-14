@@ -26,7 +26,12 @@ def main() -> None:
         ok, frame = capture.read()
         if not ok:
             continue
-        frame = cv2.resize(frame, (320, 180))
+        height, width = frame.shape[:2]
+        scale = min(320 / width, 180 / height)
+        resized = cv2.resize(frame, (max(1, round(width * scale)), max(1, round(height * scale))))
+        frame = np.zeros((180, 320, 3), dtype=np.uint8)
+        top, left = (180 - resized.shape[0]) // 2, (320 - resized.shape[1]) // 2
+        frame[top:top + resized.shape[0], left:left + resized.shape[1]] = resized
         cv2.putText(frame, f"{index / fps:.1f}s", (8, 24), cv2.FONT_HERSHEY_SIMPLEX, .7, (0, 255, 255), 2)
         tiles.append(frame)
     capture.release()

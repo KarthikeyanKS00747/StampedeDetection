@@ -7,13 +7,14 @@ from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from fog.alerts import AlertEngine
 from fog.classifier import RiskClassifier
 from fog.gpio_alarm import GPIOAlarm
+from fog.anomaly import AnomalyClassifier, AnomalyWindow
 from shared.schemas import AlertEvent, FeatureVector, RiskAssessment
 
 LOG = logging.getLogger(__name__)
@@ -22,6 +23,8 @@ LOG = logging.getLogger(__name__)
 class SystemState:
     def __init__(self) -> None:
         self.classifier = RiskClassifier()
+        self.anomaly_classifier = None
+        self.anomaly_latest = {}
         self.alerts = AlertEngine()
         self.gpio = GPIOAlarm()
         self.latest: dict[str, RiskAssessment] = {}
@@ -100,6 +103,27 @@ async def status() -> list[RiskAssessment]:
     return list(state.latest.values())
 
 
+@app.post("/api/ml/windows")
+async def ingest_ml(window: AnomalyWindow):
+    if state.anomaly_classifier is None:
+        raise HTTPException(503, "Start fog with --anomaly-model to enable research ML")
+    try:
+        result = state.anomaly_classifier.assess(window)
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from error
+    state.anomaly_latest[window.zone_id] = result
+    import json
+    await state._send_all(json.dumps({"type": "anomaly", "data": result}))
+    # Deliberately no AlertEngine/GPIO call: unvalidated research scores cannot
+    # turn the normal lamp on or operate the hardware alarm.
+    return result
+
+
+@app.get("/api/ml/status")
+async def ml_status():
+    return list(state.anomaly_latest.values())
+
+
 @app.get("/api/history/{zone_id}")
 async def history(zone_id: str) -> list[RiskAssessment]:
     return list(state.history[zone_id])
@@ -130,9 +154,12 @@ if __name__ == "__main__":
     import uvicorn
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", help="joblib classifier trained by training.train")
+    parser.add_argument("--anomaly-model", help="Trusted research quality_joint.joblib; dashboard only, no GPIO")
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
     if args.model:
         state.classifier = RiskClassifier(args.model)
+    if args.anomaly_model:
+        state.anomaly_classifier = AnomalyClassifier(args.anomaly_model)
     uvicorn.run(app, host=args.host, port=args.port)

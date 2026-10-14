@@ -49,6 +49,23 @@ data/raw/
 data/features/
 data/review/*.jpg
 
+# Machine-local video paths, derived features and reviewer state
+data/review/local_video_manifest.json
+data/review/annotation_package.json
+data/review/behaviour_annotations.json
+data/review/reviewed_behaviour_features*.json
+
+# Generated experiments, models, screenshots and temporary test directories
+# Generated review workbooks are kept locally, not in future commits.
+# Current source findings and reviewer feedback are documented under docs/.
+outputs/
+*.joblib
+*.mp4
+*.webm
+*.avi
+*.mov
+*.mkv
+
 # Trained/downloaded machine-learning artifacts
 models/*.joblib
 *.pt
