@@ -78,6 +78,25 @@ def _frame_diff_magnitude(gray_prev, gray_curr):
     return float(diff.mean())
 
 
+def frame_observation(
+    frame_idx: int,
+    fps: float,
+    gray: np.ndarray,
+    previous_gray: np.ndarray | None,
+    boxes_xyxy: list,
+    frame_name: str,
+) -> dict:
+    """Build the frozen per-frame feature contract from one detector result."""
+    return {
+        "frame_idx": frame_idx,
+        "timestamp_s": round(frame_idx / fps, 4),
+        "count": len(boxes_xyxy),
+        "mean_iou": _mean_pairwise_iou(boxes_xyxy),
+        "motion": _frame_diff_magnitude(previous_gray, gray),
+        "frame_name": frame_name,
+    }
+
+
 def extract_per_frame(image_dir: Path, fps: float):
     """
     Yields dicts with per-frame raw features:
@@ -90,7 +109,10 @@ def extract_per_frame(image_dir: Path, fps: float):
             "ERROR: ultralytics not installed. Run: pip install ultralytics"
         )
 
-    model = YOLO("yolov8n.pt")  # downloads on first run
+    weights = Path(__file__).parent / "yolov8n.pt"
+    if not weights.is_file():
+        sys.exit(f"ERROR: matching detector weights not found: {weights}")
+    model = YOLO(str(weights))
 
     frames = sorted(image_dir.glob("scene-*.png"))
     if not frames:
@@ -106,23 +128,11 @@ def extract_per_frame(image_dir: Path, fps: float):
             continue
 
         gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
-        motion = _frame_diff_magnitude(prev_gray, gray)
-        prev_gray = gray
-
         # Person detection (class 0 in COCO)
         results = model(img_bgr, classes=[0], verbose=False)
         boxes_xyxy = results[0].boxes.xyxy.cpu().numpy().tolist() if results[0].boxes else []
-        count = len(boxes_xyxy)
-        mean_iou = _mean_pairwise_iou(boxes_xyxy)
-
-        yield {
-            "frame_idx": idx,
-            "timestamp_s": round(idx / fps, 4),
-            "count": count,
-            "mean_iou": mean_iou,
-            "motion": motion,
-            "frame_name": fpath.name,
-        }
+        yield frame_observation(idx, fps, gray, prev_gray, boxes_xyxy, fpath.name)
+        prev_gray = gray
 
 
 def window_aggregate(per_frame_rows, window: int):

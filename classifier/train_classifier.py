@@ -98,13 +98,14 @@ def main():
     parser.add_argument(
         "--seed", type=int, default=42,
     )
+    parser.add_argument(
+        "--skip_in_sample_report", action="store_true",
+        help="Fit without repeating evaluation on the training windows.",
+    )
     args = parser.parse_args()
 
     try:
         from sklearn.ensemble import RandomForestClassifier
-        from sklearn.metrics import (
-            classification_report, confusion_matrix, recall_score
-        )
         import sklearn
     except ImportError:
         sys.exit("ERROR: scikit-learn not installed. Run: pip install scikit-learn")
@@ -134,15 +135,15 @@ def main():
     clf.fit(X, y)
 
     # In-sample metrics (for sanity only — real evaluation uses Italy holdout)
-    preds = clf.predict(X)
-    print("\nIn-sample confusion matrix (rows=true, cols=pred):")
-    print(confusion_matrix(y, preds))
-    print("\nIn-sample classification report:")
-    print(classification_report(y, preds, target_names=["normal", "abnormal"]))
-    print(
-        "NOTE: These are in-sample metrics. True evaluation must use the "
-        "Italy holdout via infer.py."
-    )
+    if not args.skip_in_sample_report:
+        from sklearn.metrics import classification_report, confusion_matrix
+        preds = clf.predict(X)
+        print("\nIn-sample confusion matrix (rows=true, cols=pred):")
+        print(confusion_matrix(y, preds))
+        print("\nIn-sample classification report:")
+        print(classification_report(y, preds, target_names=["normal", "abnormal"]))
+    print("Independent normal footage is needed for false-positive rate, "
+          "precision, and accuracy.")
 
     # Feature importances (useful for debugging)
     importances = sorted(

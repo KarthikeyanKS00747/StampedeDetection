@@ -1,0 +1,39 @@
+{
+  "trained_at": "2026-10-15T10:27:19.884746+00:00",
+  "sklearn_version": "1.9.1",
+  "n_estimators": 300,
+  "seed": 42,
+  "feature_names": [
+    "N_mean",
+    "N_std",
+    "overlap_mean",
+    "overlap_std",
+    "motion_mean",
+    "motion_std",
+    "delta_N"
+  ],
+  "feature_weights": {
+    "N_mean": 0.2,
+    "N_std": 0.2,
+    "delta_N": 0.2,
+    "overlap_mean": 3.0,
+    "overlap_std": 1.0,
+    "motion_mean": 3.0,
+    "motion_std": 1.0
+  },
+  "weight_rationale": "N_mean/N_std/delta_N down-weighted 5x because head-annotation audit showed YOLO undercounts by 5-10x in dense crowd footage. overlap_mean and motion_mean up-weighted 3x as count-independent signals.",
+  "training_normal_csvs": [
+    "C:\\Users\\samri\\Downloads\\FnEP\\StampedeDetection\\classifier\\features\\lv_train.csv",
+    "C:\\Users\\samri\\Downloads\\FnEP\\StampedeDetection\\classifier\\features\\ts_v1_train.csv",
+    "C:\\Users\\samri\\Downloads\\FnEP\\StampedeDetection\\classifier\\features\\ts_v2_train.csv",
+    "C:\\Users\\samri\\Downloads\\FnEP\\StampedeDetection\\classifier\\features\\ts_v3_train.csv",
+    "C:\\Users\\samri\\Downloads\\FnEP\\StampedeDetection\\classifier\\features\\lp_train1.csv",
+    "C:\\Users\\samri\\Downloads\\FnEP\\StampedeDetection\\classifier\\features\\lp_train2.csv"
+  ],
+  "training_abnormal_csvs": [
+    "C:\\Users\\samri\\Downloads\\FnEP\\StampedeDetection\\classifier\\features\\lv_test1.csv",
+    "C:\\Users\\samri\\Downloads\\FnEP\\StampedeDetection\\classifier\\features\\ts_v1_test.csv"
+  ],
+  "baseline_italy_recall": "97.8% (88/90 windows, model_retrained_2026_10_15)",
+  "holdout_incident": "Italy (4_Italy) -- NEVER used in training"
+}

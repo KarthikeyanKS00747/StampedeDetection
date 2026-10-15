@@ -1,0 +1,29 @@
+{
+  "trained_at": "2026-10-15T11:09:02.666141+00:00",
+  "sklearn_version": "1.9.1",
+  "n_estimators": 300,
+  "seed": 42,
+  "feature_names": [
+    "N_mean",
+    "N_std",
+    "overlap_mean",
+    "overlap_std",
+    "motion_mean",
+    "motion_std",
+    "delta_N"
+  ],
+  "detection": {
+    "conf": 0.05,
+    "tiled": true,
+    "tile_size": 640,
+    "overlap": 0.25,
+    "max_det": 1000
+  },
+  "training_incidents": [
+    "Las Vegas",
+    "Times Square",
+    "Love Parade"
+  ],
+  "holdout_incident": "Italy -- NEVER used in training",
+  "note": "Retrained with tiled YOLO detection. Features based on real head counts are now much higher."
+}

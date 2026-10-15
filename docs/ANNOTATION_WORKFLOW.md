@@ -1,6 +1,6 @@
 # Local behaviour review
 
-Updated 14 October 2026. This tool keeps videos on your computer: no uploads, remote assets or publishing.
+Updated 15 October 2026. This tool keeps videos on your computer: no uploads, remote assets or publishing.
 
 ## Actual dataset status
 
@@ -14,7 +14,8 @@ Pexels' [terms](https://www.pexels.com/terms-of-service/) restrict unauthorised 
 
 ## Launch
 
-In a terminal in `C:\Users\LENOVO\GitHubRepos\StampedeDetection`:
+In a terminal in the project root, with `data/review/annotation_package.json`
+present:
 
 ```powershell
 python -m review.app --port 8011
@@ -27,10 +28,14 @@ Open `http://127.0.0.1:8011/`. Stop the server with Ctrl+C when finished. It bin
 1. Press **Play this window**; repeat if necessary. Check what people actually do, not what an event title claims.
 2. Choose stationary, walking, running, mixed movement or uncertain. Describe camera motion, lights, cuts and occlusion in the observation note.
 3. Set Reviewed observation only when a definite behaviour is visible; enter your reviewer name and note. Otherwise use Uncertain or Exclude. Save explicitly before moving on.
-4. Keep source permission separate: record concrete licence/permission evidence before checking approval. A checkbox records your assessment; it does not independently verify legal rights.
-5. Export reviewed data. Only definite reviewed behaviours with evidence, reviewer, note and eligible features are exported. Empty exports are expected until these requirements are met.
+4. Export reviewed data. Only definite reviewed behaviours with reviewer, note and eligible features are exported. Empty exports are expected until these requirements are met.
 
-Annotations persist in `data/review/behaviour_annotations.json`, created on the first save. Revision checks protect against silently overwriting another browser's edits. The source package is `data/review/annotation_package.json`.
+The form no longer asks repeated source/licensing questions. Saved records and
+exports carry the user's 15 October 2026 statement that source permission is
+held; the app has not independently verified it. Existing test fixtures and
+training validation may still contain provenance fields.
+
+Annotations persist in `data/review/behaviour_annotations.json`, created on the first save. Revision checks protect against silently overwriting another browser's edits. The source package is `data/review/annotation_package.json`. This video-window website does not accept or save still images; use the separate [head-point labeler](../classifier/DENSITY_MODEL.md#prepare-annotations) for audit-frame labels and marked-image downloads. The source package is not currently present in this workspace, so regenerate it before launching this video review site.
 
 ## Training boundary
 
@@ -40,4 +45,4 @@ Pretrained GPU person detection and experimental anomaly fits already exist; no 
 
 ## Verification
 
-All 58 project tests passed on 14 October 2026, including review save/revision/export gates and HTTP routes. Browser testing verified local video playback. No real annotation or permission approval was fabricated during testing.
+On 15 October 2026, 89 project tests passed, 4 skipped. These tests used synthetic labels; they do not verify real annotation accuracy or licensing.

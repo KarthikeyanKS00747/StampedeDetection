@@ -80,8 +80,8 @@ Feature vector (7 columns, frozen order in `model/feature_order.txt`):
 
 ```bash
 python train_classifier.py \
-    --normal   features/lv_train.csv features/ts_v1_train.csv features/lp_train1.csv features/lp_train2.csv \
-    --abnormal features/lv_test1.csv features/ts_v1_test.csv \
+    --normal   features/lp_train1.csv features/lp_train2.csv features/ts_v1_train.csv features/ts_v2_train.csv features/ts_v3_train.csv features/lv_train.csv \
+    --abnormal features/ts_v1_test.csv features/ts_v2_test.csv features/ts_v3_test.csv features/lv_test1.csv features/lv_test2.csv features/lv_test3.csv features/lv_test4.csv \
     --model_dir model
 ```
 
@@ -93,7 +93,7 @@ Holdout incident: Italy (4_Italy) — zero training contact
 Saved artefacts:
 - `model/classifier.pkl` — trained Random Forest
 - `model/feature_order.txt` — 7 feature names (frozen)
-- `model/metadata.json` — training provenance, sklearn version, FPS used
+- `model/metadata.json` — training CSV provenance and sklearn version; source FPS is documented above
 
 ### Step 3 — Inference
 
@@ -112,16 +112,31 @@ Output label is `"normal"` or `"abnormal"`. **There is no automatic mapping to a
 
 ### Step 4 — Evaluation metrics
 
-When `--ground_truth` is passed, `infer.py` reports:
+When `--ground_truth` is passed, `infer.py` reports an offline summary:
 
 | Metric | Description |
 |---|---|
-| **Recall** | Fraction of abnormal sequences detected (primary) |
-| **FAR** | False alarms per normal sequence (primary) |
-| **Detection Latency** | Frames from sequence start to first alarm |
-| **Failure Cases** | Printed when recall = 0 |
+| **Any-window detection** | Whether any window in this abnormal sequence was positive |
+| **FP window fraction** | Positive windows / total windows on the supplied normal footage |
+| **First positive window** | Window frame span and **start** timestamp; not live delay |
+| **Failure case** | Printed when no abnormal window is detected |
 
-Training loss and mAP are not primary outcomes.
+The six saved normal-training replays contain **0/345 in-sample false-positive
+windows**. This does not establish an independent false-positive rate or
+false-alert episodes/hour. Two windows beginning at 5.4s and 6.0s have start
+timestamps, not detection timestamps. Their combined frame span is 135–179;
+at 25 FPS that is approximately 5.40–7.16s in frame timestamps (through about
+7.20s of captured footage). If 0.174s/frame is compute time, processing 30
+frames takes about 5.22s; live detection delay needs a separate timing test.
+For those two Italy View 2 windows, `N_mean`, `N_std`, both overlap features,
+and `delta_N` are zero, while `motion_mean` is 3.97007 and 4.19821. Thus
+`N_mean=0` is only a suspected failure mechanism; inspect detector output,
+the remaining feature distributions, and extraction behavior before assigning
+causality.
+
+Next: evaluate independent normal footage, review the proposed
+`TRIGGER_POLICY.md`, and use the exact-matched `deploy/` package for
+experimental integration. Optional YOLO fine-tuning is deferred.
 
 ---
 

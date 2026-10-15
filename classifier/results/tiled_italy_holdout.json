@@ -1,0 +1,24 @@
+{
+  "model": "model_tiled",
+  "holdout_note": "Italy CSVs extracted with OLD detector - lower bound recall",
+  "total_windows": 90,
+  "TP": 58,
+  "FN": 32,
+  "recall": 0.6444,
+  "baseline_recall": 0.9778,
+  "delta_pp": -33.33,
+  "by_clip": [
+    {
+      "clip": "italy_v1",
+      "windows": 45,
+      "TP": 33,
+      "FN": 12
+    },
+    {
+      "clip": "italy_v2",
+      "windows": 45,
+      "TP": 25,
+      "FN": 20
+    }
+  ]
+}

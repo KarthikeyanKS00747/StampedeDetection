@@ -45,6 +45,7 @@ edge_spool.jsonl
 *.sqlite3
 
 # Downloaded datasets and generated features
+Abnormal High-density Crowds/
 data/raw/
 data/features/
 data/review/*.jpg
@@ -53,6 +54,8 @@ data/review/*.jpg
 data/review/local_video_manifest.json
 data/review/annotation_package.json
 data/review/behaviour_annotations.json
+data/review/head_points.json
+data/review/density_labels/
 data/review/reviewed_behaviour_features*.json
 
 # Generated experiments, models, screenshots and temporary test directories
@@ -69,6 +72,8 @@ outputs/
 # Trained/downloaded machine-learning artifacts
 models/*.joblib
 *.pt
+!classifier/yolov8n.pt
+!classifier/deploy/yolov8n.pt
 *.pth
 *.onnx
 .ultralytics/

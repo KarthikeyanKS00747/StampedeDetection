@@ -1,46 +1,30 @@
-# Integration Notes — Crowd Anomaly Classifier
+# Experimental classifier integration
 
-## What this package contains
-- `infer.py`            — inference entry point
-- `extract_features.py` — feature extractor (must not be modified)
-- `model/`              — trained Random Forest + feature order + metadata
-- `requirements.txt`    — pinned dependencies
+This package contains `infer.py`, `extract_features.py`, `yolov8n.pt`,
+`model/classifier.pkl`, `model/feature_order.txt`, `model/metadata.json`,
+`requirements.txt`, `TRIGGER_POLICY.md`, and `SHA256SUMS.json`.
 
-## Critical constraints before going live
+The classifier was trained with YOLOv8n person detections at the source video
+frame rate. Use the packaged detector weights and extractor, 30-frame windows,
+15-frame stride, and the actual source FPS. The existing live baseline uses
+YOLO11s at 5 FPS; its features are not interchangeable with these features.
+The extractor expects capture-ordered `scene-*.png` frames. It computes person
+count and box overlap from YOLOv8n and motion from grayscale frame difference.
 
-### 1. Detector must match training exactly
-This model was trained on **YOLOv8n** person detections at **source video FPS**.
-Your live system uses **YOLO11s at 5 FPS**.
-These are NOT interchangeable. Features (N_mean, overlap_mean, motion_mean) will
-differ systematically. Before live inference:
-  Option A: use yolov8n.pt in the live pipeline (same as training)
-  Option B: re-extract all training features using YOLO11s/5-FPS, retrain
+Output is an experimental observation in a separate channel. It does not map
+to a risk tier, activate the buzzer, or override the existing baseline.
+The proposed trigger and clearance policy is in `TRIGGER_POLICY.md`.
 
-### 2. FPS must be passed explicitly
-Pass --fps matching the camera's actual frame rate. Do not assume.
+Training-footage replay observed 0/345 false-positive windows. Independent
+false-positive window rate and false-alert episodes/hour remain unknown.
+Offline processing duration is not live detection delay. Evaluate independent
+normal footage and measure live timing before activation.
 
-### 3. Output is observation only
-infer.py outputs "normal" or "abnormal" per window.
-Do NOT automatically map "abnormal" to High/Critical risk tier.
-Do NOT trigger the buzzer automatically.
-Log alongside the existing YOLO + rule-based baseline.
+Example from this directory:
 
-### 4. Trigger and clearance policy
-See TRIGGER_POLICY.md for the agreed alert episode definition.
+```powershell
+python infer.py --image_dir path/to/frames --fps 25 --model_dir model --ground_truth 0 --output_csv results/normal.csv
+```
 
-### 5. Independent FAR not yet measured
-False-positive rate on independent normal footage is unknown.
-Do not use in production until tested on: routine walking, stationary
-crowds, empty scene, lighting changes, camera movement.
-
-## Runnable inference command
-  python infer.py \
-      --image_dir path/to/frames \
-      --fps 25 \
-      --model_dir model \
-      --output_csv results/output.csv
-
-## Window parameters (must match training)
-  Window length : 30 frames
-  Stride        : 15 frames (50% overlap)
-  Threshold     : 0.5 (RF majority vote)
+Record footage provenance, duration, FPS, ground truth, positive windows,
+total windows, and distinct alert episodes per hour under the draft policy.

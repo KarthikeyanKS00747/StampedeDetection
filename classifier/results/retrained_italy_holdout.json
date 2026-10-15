@@ -1,0 +1,29 @@
+{
+  "model_dir": "classifier\\model_retrained_2026_10_15",
+  "scope": "Italy abnormal holdout, cached rounded features; window-level",
+  "positive_windows": 90,
+  "true_positive_windows": 88,
+  "false_negative_windows": 2,
+  "false_negative_window_fraction": 0.022222222222222223,
+  "false_positive_windows_independent": null,
+  "precision_independent": null,
+  "accuracy_independent": null,
+  "combined_fusion_metrics": null,
+  "reason_unavailable": "No independent normal footage and no aligned baseline outputs for this holdout are available.",
+  "by_clip": [
+    {
+      "source": "classifier\\results\\italy_v1.csv",
+      "positive_windows": 45,
+      "true_positive_windows": 45,
+      "false_negative_windows": 0,
+      "changed_from_saved_prediction": 0
+    },
+    {
+      "source": "classifier\\results\\italy_v2.csv",
+      "positive_windows": 45,
+      "true_positive_windows": 43,
+      "false_negative_windows": 2,
+      "changed_from_saved_prediction": 0
+    }
+  ]
+}

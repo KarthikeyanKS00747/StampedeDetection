@@ -1,0 +1,12 @@
+body { margin: 0; background: #f5f7fa; color: #1c2935; font: 16px system-ui, sans-serif; }
+main { max-width: 1200px; margin: auto; padding: 1rem; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin: 1rem 0; }
+button, select, input, textarea { font: inherit; }
+button { padding: .4rem .7rem; cursor: pointer; }
+#frame-select { max-width: 31rem; padding: .4rem; }
+#canvas-scroll { max-height: 68vh; overflow: auto; background: #101820; border: 2px solid #465463; }
+#image-canvas { display: block; cursor: crosshair; }
+.form { display: grid; gap: .7rem; max-width: 48rem; margin: 1rem 0; }
+.form label { display: grid; gap: .2rem; }
+textarea { width: 100%; box-sizing: border-box; }
+#message { min-height: 1.5rem; font-weight: 600; }

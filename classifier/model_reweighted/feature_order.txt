@@ -1,0 +1,7 @@
+N_mean
+N_std
+overlap_mean
+overlap_std
+motion_mean
+motion_std
+delta_N

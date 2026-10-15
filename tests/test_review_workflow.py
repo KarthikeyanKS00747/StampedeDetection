@@ -18,11 +18,10 @@ def package():
 
 def approved():
     return Annotation(expected_revision=0, status="reviewed", behaviour_label="walking",
-                      reviewer="Synthetic test reviewer", note="Synthetic fixture, not source footage",
-                      rights_approved=True, permission_evidence="Synthetic test fixture")
+                      reviewer="Synthetic test reviewer", note="Synthetic fixture, not source footage")
 
 
-def test_review_and_permission_and_quality_are_separate_gates(tmp_path, package):
+def test_review_and_quality_are_separate_gates(tmp_path, package):
     store = ReviewStore(package, tmp_path / "annotations.json")
     draft = Annotation(expected_revision=0, behaviour_label="walking")
     store.save("one", draft)
@@ -33,6 +32,8 @@ def test_review_and_permission_and_quality_are_separate_gates(tmp_path, package)
     store.save("two", approved())
     rows = store.export()["rows"]
     assert len(rows) == 1 and rows[0]["window_id"] == "one"
+    assert rows[0]["rights_approved"] is True
+    assert "not independently verified" in rows[0]["permission_evidence"]
     assert not store.export()["risk_labels_created"]
 
 

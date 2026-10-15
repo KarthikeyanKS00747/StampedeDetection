@@ -1,8 +1,14 @@
 """
 extract_features.py
 -------------------
-Runs a YOLOv8n person detector over a sorted directory of PNG frames and
-writes a CSV of per-frame and windowed aggregate features.
+Runs a person detector over a sorted directory of PNG frames and writes a CSV
+of per-frame and windowed aggregate features.
+
+Detection uses tiled inference by default (--no-tiling to disable):
+  - Confidence threshold 0.05  (vs YOLO default 0.25)
+  - 640px overlapping tile crops so people appear larger
+  - max_det=1000 for very dense scenes
+This is the fix for YOLO severely undercounting in dense crowd footage.
 
 Feature vector (7 columns, frozen order — see model/feature_order.txt):
   N_mean, N_std, overlap_mean, overlap_std, motion_mean, motion_std, delta_N
@@ -78,10 +84,33 @@ def _frame_diff_magnitude(gray_prev, gray_curr):
     return float(diff.mean())
 
 
-def extract_per_frame(image_dir: Path, fps: float):
+def frame_observation(
+    frame_idx: int,
+    fps: float,
+    gray: np.ndarray,
+    previous_gray: np.ndarray | None,
+    boxes_xyxy: list,
+    frame_name: str,
+) -> dict:
+    """Build the frozen per-frame feature contract from one detector result."""
+    return {
+        "frame_idx": frame_idx,
+        "timestamp_s": round(frame_idx / fps, 4),
+        "count": len(boxes_xyxy),
+        "mean_iou": _mean_pairwise_iou(boxes_xyxy),
+        "motion": _frame_diff_magnitude(previous_gray, gray),
+        "frame_name": frame_name,
+    }
+
+
+def extract_per_frame(image_dir: Path, fps: float, tiled: bool = True, conf: float = 0.05):
     """
     Yields dicts with per-frame raw features:
       frame_idx, timestamp_s, count, mean_iou, motion
+
+    Args:
+        tiled: Use tiled inference (recommended for dense crowds). Default True.
+        conf:  Detection confidence threshold. Default 0.05 (vs YOLO default 0.25).
     """
     try:
         from ultralytics import YOLO
@@ -90,13 +119,25 @@ def extract_per_frame(image_dir: Path, fps: float):
             "ERROR: ultralytics not installed. Run: pip install ultralytics"
         )
 
-    model = YOLO("yolov8n.pt")  # downloads on first run
+    weights = Path(__file__).parent / "yolov8n.pt"
+    if not weights.is_file():
+        sys.exit(f"ERROR: matching detector weights not found: {weights}")
+    model = YOLO(str(weights))
+
+    # Import tiled detector from shared module
+    try:
+        shared_root = Path(__file__).resolve().parents[1] / "shared"
+        sys.path.insert(0, str(shared_root.parent))
+        from shared.tiled_detector import detect_tiled, detect_simple
+    except ImportError as e:
+        sys.exit(f"ERROR: Could not import tiled_detector: {e}")
 
     frames = sorted(image_dir.glob("scene-*.png"))
     if not frames:
         sys.exit(f"ERROR: No scene-NNNNN.png files found in {image_dir}")
 
-    print(f"Found {len(frames)} frames in {image_dir}")
+    mode = "tiled (conf={})".format(conf) if tiled else "single-pass imgsz=1280 (conf={})".format(conf)
+    print(f"Found {len(frames)} frames in {image_dir} | detection: {mode}")
 
     prev_gray = None
     for idx, fpath in enumerate(frames):
@@ -106,23 +147,16 @@ def extract_per_frame(image_dir: Path, fps: float):
             continue
 
         gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
-        motion = _frame_diff_magnitude(prev_gray, gray)
+
+        # --- improved detection ---
+        if tiled:
+            boxes_np = detect_tiled(model, img_bgr, conf=conf)
+        else:
+            boxes_np = detect_simple(model, img_bgr, conf=conf, imgsz=1280)
+        boxes_xyxy = boxes_np.tolist()
+
+        yield frame_observation(idx, fps, gray, prev_gray, boxes_xyxy, fpath.name)
         prev_gray = gray
-
-        # Person detection (class 0 in COCO)
-        results = model(img_bgr, classes=[0], verbose=False)
-        boxes_xyxy = results[0].boxes.xyxy.cpu().numpy().tolist() if results[0].boxes else []
-        count = len(boxes_xyxy)
-        mean_iou = _mean_pairwise_iou(boxes_xyxy)
-
-        yield {
-            "frame_idx": idx,
-            "timestamp_s": round(idx / fps, 4),
-            "count": count,
-            "mean_iou": mean_iou,
-            "motion": motion,
-            "frame_name": fpath.name,
-        }
 
 
 def window_aggregate(per_frame_rows, window: int):
@@ -180,6 +214,14 @@ def main():
         "--output_csv", required=True,
         help="Output CSV file path."
     )
+    parser.add_argument(
+        "--no-tiling", action="store_true",
+        help="Disable tiled inference and use single-pass at imgsz=1280 instead."
+    )
+    parser.add_argument(
+        "--conf", type=float, default=0.05,
+        help="Detection confidence threshold (default: 0.05, vs YOLO default 0.25)."
+    )
     args = parser.parse_args()
 
     image_dir = Path(args.image_dir)
@@ -189,7 +231,7 @@ def main():
     print(f"fps={args.fps}, window={args.window} frames "
           f"({args.window / args.fps:.1f}s)")
 
-    per_frame = list(extract_per_frame(image_dir, args.fps))
+    per_frame = list(extract_per_frame(image_dir, args.fps, tiled=not args.no_tiling, conf=args.conf))
     if len(per_frame) < args.window:
         sys.exit(
             f"ERROR: only {len(per_frame)} frames, need at least {args.window}"

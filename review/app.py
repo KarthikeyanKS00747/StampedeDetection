@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parents[1]
 BEHAVIOURS = {"stationary", "walking", "running", "mixed_motion", "uncertain"}
+USER_PERMISSION_STATEMENT = "User confirmed source permission for this project on 2026-10-15; not independently verified"
 
 
 class Annotation(BaseModel):
@@ -23,8 +24,6 @@ class Annotation(BaseModel):
     behaviour_label: str | None = None
     reviewer: str = Field(default="", max_length=100)
     note: str = Field(default="", max_length=2000)
-    rights_approved: bool = False
-    permission_evidence: str = Field(default="", max_length=2000)
 
 
 class ReviewStore:
@@ -49,14 +48,14 @@ class ReviewStore:
         if annotation.status == "reviewed" and (annotation.behaviour_label in {None, "uncertain"}
                 or not annotation.reviewer.strip() or not annotation.note.strip()):
             raise HTTPException(422, "Reviewed entries need a definite behaviour, reviewer and observation note")
-        if annotation.rights_approved and not annotation.permission_evidence.strip():
-            raise HTTPException(422, "Rights approval needs source-specific permission evidence")
         with self.lock:
             values = self.read()
             previous = values.get(item_id, {"revision": 0})
             if previous["revision"] != annotation.expected_revision:
                 raise HTTPException(409, "Annotation changed elsewhere; reload before saving")
             values[item_id] = {**annotation.model_dump(exclude={"expected_revision"}),
+                               "rights_approved": True,
+                               "permission_evidence": USER_PERMISSION_STATEMENT,
                                "revision": previous["revision"] + 1,
                                "updated_at": datetime.now(timezone.utc).isoformat()}
             self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -71,13 +70,13 @@ class ReviewStore:
             a = annotations.get(item_id, {})
             if (a.get("status") == "reviewed" and a.get("behaviour_label") in BEHAVIOURS - {"uncertain"}
                     and a.get("reviewer", "").strip() and a.get("note", "").strip()
-                    and a.get("rights_approved") is True and a.get("permission_evidence", "").strip()
                     and item["quality_eligible"] is True):
                 accepted.append({"window_id": item_id, "clip_id": item["clip_id"],
                                  "event_id": item["event_group"], "start_s": item["start_s"], "end_s": item["end_s"],
                                  "features": item["features"], "behaviour_label": a["behaviour_label"],
                                  "reviewer": a["reviewer"], "review_note": a["note"],
-                                 "rights_approved": True, "permission_evidence": a["permission_evidence"],
+                                 "rights_approved": True,
+                                 "permission_evidence": USER_PERMISSION_STATEMENT,
                                  "quality_eligible": True})
         return {"schema": "reviewed_behaviour_features_v1", "feature_names": self.package["feature_names"],
                 "risk_labels_created": False, "rows": accepted}

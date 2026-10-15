@@ -1,0 +1,23 @@
+{
+  "model": "model_reweighted",
+  "total_windows": 90,
+  "true_positive_windows": 48,
+  "false_negative_windows": 42,
+  "recall": 0.533333,
+  "baseline_recall": 0.9778,
+  "delta_pp": -44.45,
+  "by_clip": [
+    {
+      "clip": "italy_v1",
+      "windows": 45,
+      "TP": 7,
+      "FN": 38
+    },
+    {
+      "clip": "italy_v2",
+      "windows": 45,
+      "TP": 41,
+      "FN": 4
+    }
+  ]
+}

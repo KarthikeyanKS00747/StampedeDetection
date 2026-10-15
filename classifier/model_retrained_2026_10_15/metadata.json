@@ -1,0 +1,43 @@
+{
+  "trained_at": "2026-10-15T11:20:34.928436+00:00",
+  "sklearn_version": "1.9.1",
+  "n_estimators": 200,
+  "seed": 42,
+  "feature_names": [
+    "N_mean",
+    "N_std",
+    "overlap_mean",
+    "overlap_std",
+    "motion_mean",
+    "motion_std",
+    "delta_N"
+  ],
+  "training_normal_csvs": [
+    "classifier\\features\\lp_train1.csv",
+    "classifier\\features\\lp_train2.csv",
+    "classifier\\features\\ts_v1_train.csv",
+    "classifier\\features\\ts_v2_train.csv",
+    "classifier\\features\\ts_v3_train.csv",
+    "classifier\\features\\lv_train.csv"
+  ],
+  "training_abnormal_csvs": [
+    "classifier\\features\\ts_v1_test.csv",
+    "classifier\\features\\ts_v2_test.csv",
+    "classifier\\features\\ts_v3_test.csv",
+    "classifier\\features\\lv_test1.csv",
+    "classifier\\features\\lv_test2.csv",
+    "classifier\\features\\lv_test3.csv",
+    "classifier\\features\\lv_test4.csv"
+  ],
+  "training_incidents": [
+    "Las Vegas",
+    "Times Square",
+    "Love Parade"
+  ],
+  "holdout_incident": "Italy (4_Italy) \u2014 NEVER used in training",
+  "class_mapping": {
+    "0": "normal",
+    "1": "abnormal"
+  },
+  "note": "This is an experimental model. It is NOT a validated stampede predictor. The YOLO + rule-based baseline remains primary."
+}

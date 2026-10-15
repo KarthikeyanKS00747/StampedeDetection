@@ -7,12 +7,15 @@ Creates deploy/ containing:
   deploy/
     infer.py                  <- inference entry point
     extract_features.py       <- feature extractor (must match training exactly)
+    yolov8n.pt                <- exact person detector weights
     model/
       classifier.pkl
       feature_order.txt
       metadata.json
     requirements.txt
-    INTEGRATION_NOTES.md      <- constraints and warnings
+    TRIGGER_POLICY.md
+    INTEGRATION_NOTES.md
+    SHA256SUMS.json
 
 Usage
 -----
@@ -20,8 +23,10 @@ Usage
   # Output: deploy/ folder ready to copy to integration environment
 """
 
-import shutil
+import hashlib
 import json
+import shutil
+import ast
 from pathlib import Path
 
 BASE = Path(__file__).parent
@@ -30,7 +35,10 @@ DEPLOY = BASE / "deploy"
 FILES = [
     ("infer.py",            "infer.py"),
     ("extract_features.py", "extract_features.py"),
+    ("yolov8n.pt",          "yolov8n.pt"),
     ("requirements.txt",    "requirements.txt"),
+    ("TRIGGER_POLICY.md",   "TRIGGER_POLICY.md"),
+    ("INTEGRATION_NOTES.md", "INTEGRATION_NOTES.md"),
 ]
 MODEL_FILES = [
     "classifier.pkl",
@@ -38,94 +46,51 @@ MODEL_FILES = [
     "metadata.json",
 ]
 
-INTEGRATION_NOTES = """\
-# Integration Notes — Crowd Anomaly Classifier
-
-## What this package contains
-- `infer.py`            — inference entry point
-- `extract_features.py` — feature extractor (must not be modified)
-- `model/`              — trained Random Forest + feature order + metadata
-- `requirements.txt`    — pinned dependencies
-
-## Critical constraints before going live
-
-### 1. Detector must match training exactly
-This model was trained on **YOLOv8n** person detections at **source video FPS**.
-Your live system uses **YOLO11s at 5 FPS**.
-These are NOT interchangeable. Features (N_mean, overlap_mean, motion_mean) will
-differ systematically. Before live inference:
-  Option A: use yolov8n.pt in the live pipeline (same as training)
-  Option B: re-extract all training features using YOLO11s/5-FPS, retrain
-
-### 2. FPS must be passed explicitly
-Pass --fps matching the camera's actual frame rate. Do not assume.
-
-### 3. Output is observation only
-infer.py outputs "normal" or "abnormal" per window.
-Do NOT automatically map "abnormal" to High/Critical risk tier.
-Do NOT trigger the buzzer automatically.
-Log alongside the existing YOLO + rule-based baseline.
-
-### 4. Trigger and clearance policy
-See TRIGGER_POLICY.md for the agreed alert episode definition.
-
-### 5. Independent FAR not yet measured
-False-positive rate on independent normal footage is unknown.
-Do not use in production until tested on: routine walking, stationary
-crowds, empty scene, lighting changes, camera movement.
-
-## Runnable inference command
-  python infer.py \\
-      --image_dir path/to/frames \\
-      --fps 25 \\
-      --model_dir model \\
-      --output_csv results/output.csv
-
-## Window parameters (must match training)
-  Window length : 30 frames
-  Stride        : 15 frames (50% overlap)
-  Threshold     : 0.5 (RF majority vote)
-"""
-
 
 def main():
-    if DEPLOY.exists():
-        shutil.rmtree(DEPLOY)
-    DEPLOY.mkdir()
+    required = [BASE / src for src, _ in FILES]
+    required += [BASE / "model" / name for name in MODEL_FILES]
+    missing = [str(path) for path in required if not path.is_file()]
+    if missing:
+        raise FileNotFoundError("Missing package inputs: " + ", ".join(missing))
+    DEPLOY.mkdir(exist_ok=True)
 
     # Copy scripts
     for src_name, dst_name in FILES:
         src = BASE / src_name
-        if not src.exists():
-            print(f"MISSING: {src_name}")
-            continue
         shutil.copy2(src, DEPLOY / dst_name)
         print(f"Copied {src_name}")
 
     # Copy model directory
     model_src = BASE / "model"
     model_dst = DEPLOY / "model"
-    model_dst.mkdir()
+    model_dst.mkdir(exist_ok=True)
     for f in MODEL_FILES:
         src = model_src / f
-        if not src.exists():
-            print(f"MISSING: model/{f}")
-            continue
         shutil.copy2(src, model_dst / f)
         print(f"Copied model/{f}")
 
-    # Write integration notes
-    (DEPLOY / "INTEGRATION_NOTES.md").write_text(INTEGRATION_NOTES)
-    print("Wrote INTEGRATION_NOTES.md")
-
-    # Verify feature_order matches extractor
+    # Verify feature_order matches the actual extractor declaration.
     feat_order = (model_dst / "feature_order.txt").read_text().strip().splitlines()
-    extractor_text = (DEPLOY / "extract_features.py").read_text()
-    mismatches = [f for f in feat_order if f not in extractor_text]
-    if mismatches:
-        print(f"WARNING: feature_order.txt entries not found in extractor: {mismatches}")
-    else:
-        print("Verified: all feature_order.txt entries present in extract_features.py")
+    extractor_ast = ast.parse((DEPLOY / "extract_features.py").read_text())
+    extractor_features = next(
+        ast.literal_eval(node.value) for node in extractor_ast.body
+        if isinstance(node, ast.Assign)
+        and any(isinstance(target, ast.Name) and target.id == "FEATURE_NAMES"
+                for target in node.targets)
+    )
+    if feat_order != extractor_features:
+        raise ValueError("Feature order differs from packaged extractor")
+    print("Verified: model feature order matches packaged extractor")
+
+    package_files = [DEPLOY / dst for _, dst in FILES]
+    package_files += [model_dst / name for name in MODEL_FILES]
+    checksums = {
+        str(path.relative_to(DEPLOY)).replace("\\", "/"):
+            hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in package_files
+    }
+    (DEPLOY / "SHA256SUMS.json").write_text(json.dumps(checksums, indent=2) + "\n")
 
     # Print metadata summary
     meta = json.loads((model_dst / "metadata.json").read_text())
@@ -136,7 +101,7 @@ def main():
     print(f"  Holdout         : {meta.get('holdout_incident')}")
 
     print(f"\nDeployment package ready -> {DEPLOY}/")
-    print("Next: resolve detector mismatch (YOLOv8n vs YOLO11s) before live inference.")
+    print("Use this matched extractor/weight/model set for experimental integration only.")
 
 
 if __name__ == "__main__":

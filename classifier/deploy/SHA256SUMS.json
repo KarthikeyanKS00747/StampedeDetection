@@ -1,0 +1,11 @@
+{
+  "infer.py": "168bdc980ba283fc9250647f13b5a167cdce372b6fad804ac020fd685e6c20dd",
+  "extract_features.py": "8e7cc8bb80999975dad955bbf86caf074c5432333fc9dc9ce382bd39641d6703",
+  "yolov8n.pt": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
+  "requirements.txt": "20da537e1695a760c7109414ea74cbd16253bc77b2b466f221dbb44eacf1ea40",
+  "TRIGGER_POLICY.md": "a7037398e7d49c09fd3e1edf7a217910d114c1280c8c0c2a82090c70906ea5d5",
+  "INTEGRATION_NOTES.md": "a75c4a3551f1f02cc4a24a5e32630348bbceedfee2273f569fb9881329fbea94",
+  "model/classifier.pkl": "a39004a125a386d3e8765f913c60e56a5a1cde3668a53ff7a93082f7a587951e",
+  "model/feature_order.txt": "fce5427d78d1032897b5c158ebf42430c0fe7eeda86fe5180977804dd769c078",
+  "model/metadata.json": "4e31dc83c491fbf66c4246e11c411a98f7ed31032288dd005642ccb15b1f6e1b"
+}

@@ -12,6 +12,11 @@ This project implements a privacy-preserving, single-camera early-warning system
 
 ## Architecture
 
+An [experimental combined detector](classifier/COMBINED_DETECTOR.md) can
+review agreement between the saved sequence classifier and the existing
+edge/fog risk signal on the same recording. It produces offline
+candidate episodes and is not connected to the operational alert or GPIO.
+
 ```
 camera/video -> edge feature extractor -> HTTP JSON -> fog classifier/alerts -> dashboard + GPIO alarm
 ```

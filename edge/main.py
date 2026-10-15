@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 import os
 import time
-from collections import defaultdict
 from pathlib import Path
 
 import cv2
@@ -11,7 +10,9 @@ import numpy as np
 
 from edge.features import FeatureExtractor
 from edge.motion import frame_time, velocities
+from edge.person_tracking import PersonTracker
 from edge.transport import FogTransport
+from shared.tiled_detector import detect_tiled, detect_simple, CONF_THRESHOLD
 
 
 def simulate(extractor: FeatureExtractor, transport: FogTransport, zone_id: str) -> None:
@@ -40,11 +41,9 @@ def run_video(args: argparse.Namespace, extractor: FeatureExtractor, transport: 
         config_root.mkdir(exist_ok=True)
         os.environ.setdefault("YOLO_CONFIG_DIR", str(config_root))
         from ultralytics import YOLO
-        import supervision as sv
         model = YOLO(args.model)
-        tracker = sv.ByteTrack()
+        tracker = PersonTracker()
     previous_gray = None
-    previous_centres: dict[int, tuple[float, float]] = {}
     last_emit = -float("inf")
     previous_time = None
     frame_index = -1
@@ -68,21 +67,26 @@ def run_video(args: argparse.Namespace, extractor: FeatureExtractor, transport: 
         previous_gray = gray
         count, track_vectors = 0, []
         if model is not None and tracker is not None:
-            result = model(frame, classes=[0], verbose=False)[0]
-            detections = __import__("supervision").Detections.from_ultralytics(result)
-            tracked = tracker.update_with_detections(detections)
-            count = len(tracked)
-            current_centres = {}
-            for box, track_id in zip(tracked.xyxy, tracked.tracker_id):
-                centre = (float((box[0] + box[2]) / 2), float((box[1] + box[3]) / 2))
-                current_centres[int(track_id)] = centre
-                if int(track_id) in previous_centres:
-                    old = previous_centres[int(track_id)]
-                    track_vectors.extend(velocities([(centre[0] - old[0], centre[1] - old[1])], delta_s))
-            previous_centres = current_centres
+            # Tiled detection gives 5-10x more detections in dense crowds.
+            # We still run a single-pass predict for PersonTracker (it needs
+            # the full YOLO result object), then override the raw count with
+            # the tiled box count which is more accurate.
+            if args.tiled:
+                boxes = detect_tiled(model, frame, conf=args.conf)
+            else:
+                boxes = detect_simple(model, frame, conf=args.conf, imgsz=1280)
+            result = model.predict(
+                frame, conf=args.conf, classes=[0],
+                imgsz=640, max_det=1000, verbose=False,
+            )[0]
+            _, track_vectors = tracker.update(result, delta_s)
+            count = len(boxes)   # use tiled count, not tracker count
         if now - last_emit >= args.window_seconds:
             transport.flush()
-            transport.send(extractor.extract(args.zone_id, now, count, track_vectors, flow_vectors, source="camera" if is_camera else "video"))
+            transport.send(extractor.extract(
+                args.zone_id, now, count, track_vectors, flow_vectors,
+                source="camera" if is_camera else "video",
+            ))
             last_emit = now
     capture.release()
 
@@ -98,6 +102,11 @@ def main() -> None:
     parser.add_argument("--sample-fps", type=float, default=5.0)
     parser.add_argument("--simulate", action="store_true")
     parser.add_argument("--no-yolo", action="store_true")
+    parser.add_argument("--no-tiling", dest="tiled", action="store_false",
+                        help="Use single-pass imgsz=1280 instead of tiled inference")
+    parser.set_defaults(tiled=True)
+    parser.add_argument("--conf", type=float, default=CONF_THRESHOLD,
+                        help=f"Detection confidence threshold (default: {CONF_THRESHOLD})")
     args = parser.parse_args()
     if args.sample_fps <= 0 or args.window_seconds <= 0:
         parser.error("sample-fps and window-seconds must be positive")

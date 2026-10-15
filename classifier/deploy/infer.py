@@ -6,8 +6,9 @@ Runs the trained anomaly classifier on a directory of PNG frames.
 Output: per-window label ("normal" or "abnormal") and confidence score,
 written to a CSV and printed to stdout.
 
-When --ground_truth is provided (0=normal, 1=abnormal), the script also
-computes Recall, False Alarm Rate (FAR), and Detection Latency.
+When --ground_truth is provided (0=normal, 1=abnormal), the script reports
+sequence detection or the observed false-positive window fraction. These
+offline outputs do not measure live detection latency or false alerts/hour.
 
 IMPORTANT: The output label "abnormal" is NOT automatically mapped to any
 risk tier. Integration with the alert system requires a separate, documented
@@ -70,11 +71,11 @@ def load_model(model_dir: Path):
 
 def metrics_report(windows, ground_truth_label: int):
     """
-    Compute Recall, FAR, and Detection Latency.
+    Summarize offline windows. Independence depends on supplied footage.
 
     ground_truth_label:
-      1 => this sequence is abnormal  (recall + latency apply)
-      0 => this sequence is normal    (FAR applies)
+      1 => this sequence is abnormal (any-window detection)
+      0 => this sequence is normal (false-positive window fraction)
     """
     labels = [w["predicted_label"] for w in windows]
 
@@ -82,29 +83,31 @@ def metrics_report(windows, ground_truth_label: int):
         # Recall: was any window flagged abnormal?
         detected = any(l == "abnormal" for l in labels)
         recall = 1.0 if detected else 0.0
-        # Detection latency: index of first abnormal window
-        latency_windows = next(
+        first_window = next(
             (i for i, l in enumerate(labels) if l == "abnormal"), None
         )
-        latency_frames = (
-            windows[latency_windows]["window_start_frame"]
-            if latency_windows is not None else None
-        )
         print(f"\n--- Evaluation (ground truth: ABNORMAL) ---")
-        print(f"  Recall          : {recall:.2f}")
-        print(f"  First alarm at  : window {latency_windows}, "
-              f"frame {latency_frames}")
+        print(f"  Any-window detection: {recall:.2f} (one sequence)")
+        if first_window is not None:
+            first = windows[first_window]
+            print(f"  First positive window: {first_window}, frames "
+                  f"{first['window_start_frame']}-{first['window_end_frame']}, "
+                  f"start timestamp {first['window_start_ts']}s")
+        print("  Live detection delay: not measured")
         if recall == 0.0:
             print("  FAILURE CASE: model did not detect any abnormal window.")
 
     else:
         n_alarms = sum(1 for l in labels if l == "abnormal")
         n_windows = len(labels)
-        far = n_alarms / max(n_windows, 1)
+        fraction = n_alarms / n_windows if n_windows else float("nan")
         print(f"\n--- Evaluation (ground truth: NORMAL) ---")
         print(f"  Total windows   : {n_windows}")
-        print(f"  False alarms    : {n_alarms}")
-        print(f"  FAR             : {far:.4f} ({far*100:.1f}%)")
+        print(f"  False-positive windows: {n_alarms}")
+        print(f"  Observed FP window fraction: {n_alarms}/{n_windows} "
+              f"({fraction*100:.1f}%)")
+        print("  Independent FP rate and false-alert episodes/hour: "
+              "require independent normal footage and an episode policy")
 
 
 def main():
@@ -134,9 +137,13 @@ def main():
     parser.add_argument(
         "--ground_truth", type=int, choices=[0, 1], default=None,
         help="0=normal sequence, 1=abnormal sequence. "
-             "Enables Recall/FAR/Latency reporting."
+             "Enables offline window-level summary."
     )
     args = parser.parse_args()
+    if args.window != 30:
+        parser.error("This model requires 30-frame windows and a 15-frame stride.")
+    if args.fps <= 0:
+        parser.error("--fps must be positive.")
 
     image_dir = Path(args.image_dir)
     model_dir = Path(args.model_dir)

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local head-point review</title>
+  <link rel="stylesheet" href="/static/head_labeler.css">
+  <script src="/static/head_labeler.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Head-point review</h1>
+    <p>Click the centre of each <em>visible, identifiable head</em>. Zoom and scroll for distant people. Do not guess hidden people. Red dots are labels you enter, not YOLO predictions.</p>
+    <div class="toolbar">
+      <button id="previous" type="button">Previous</button>
+      <select id="frame-select" aria-label="Frame"></select>
+      <button id="next" type="button">Next</button>
+      <label>Zoom <input id="zoom" type="range" min="20" max="150" value="40" step="10"><span id="zoom-value">40%</span></label>
+      <button id="undo" type="button">Undo point</button>
+      <button id="clear" type="button">Clear points</button>
+    </div>
+    <p id="frame-info"></p>
+    <div id="canvas-scroll"><canvas id="image-canvas" aria-label="Click visible head centres"></canvas></div>
+    <p>Marked head points: <strong id="count">0</strong>. The YOLO number shown above is a prediction, not a label. You may save a reviewed empty scene with zero points.</p>
+    <div class="form">
+      <label>Status <select id="status"><option value="draft">Draft</option><option value="reviewed">Reviewed</option><option value="uncountable">Uncountable</option></select></label>
+      <label>Reviewer <input id="reviewer" maxlength="100" autocomplete="name"></label>
+      <label>Observation note <textarea id="note" maxlength="2000" rows="2" placeholder="Visibility, blur, occlusion, camera view…"></textarea></label>
+      <button id="save" type="button">Save head labels</button>
+      <button id="download" type="button">Download marked image</button>
+      <p id="message" role="status"></p>
+    </div>
+    <p>Saving stores head-point coordinates locally, not a copy of the image. Download marked image saves the visible overlay to your Downloads folder. Training export is a separate terminal step; uncountable frames are excluded.</p>
+  </main>
+</body>
+</html>
